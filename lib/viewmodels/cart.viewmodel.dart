@@ -36,7 +36,6 @@ class CartViewModel extends ChangeNotifier {
 
     try {
       await _cartService.fetchCart(id);
-      // Si quieres mostrar un solo carrito, puedes agregar una propiedad para eso
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -61,5 +60,67 @@ class CartViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-}
 
+  Future<bool> createCart(Cart cart) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final newCart = await _cartService.createCart(cart);
+      _carts.add(newCart);
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateCart(int id, Cart cart) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final updatedCart = await _cartService.updateCart(id, cart);
+      final index = _carts.indexWhere((c) => c.id == id);
+      if (index != -1) {
+        _carts[index] = updatedCart;
+      }
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteCart(int id) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _cartService.deleteCart(id);
+      _carts.removeWhere((c) => c.id == id);
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+}

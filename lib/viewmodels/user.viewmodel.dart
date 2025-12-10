@@ -36,7 +36,6 @@ class UserViewModel extends ChangeNotifier {
 
     try {
       await _userService.fetchUser(id);
-      // Si quieres mostrar un solo usuario, puedes agregar una propiedad para eso
       _error = null;
     } catch (e) {
       _error = e.toString();
@@ -45,5 +44,67 @@ class UserViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-}
 
+  Future<bool> createUser(User user) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final newUser = await _userService.createUser(user);
+      _users.add(newUser);
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> updateUser(int id, User user) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final updatedUser = await _userService.updateUser(id, user);
+      final index = _users.indexWhere((u) => u.id == id);
+      if (index != -1) {
+        _users[index] = updatedUser;
+      }
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteUser(int id) async {
+    _cargando = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _userService.deleteUser(id);
+      _users.removeWhere((u) => u.id == id);
+      _error = null;
+      _cargando = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _cargando = false;
+      notifyListeners();
+      return false;
+    }
+  }
+}

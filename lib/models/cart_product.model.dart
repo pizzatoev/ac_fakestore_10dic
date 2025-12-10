@@ -6,8 +6,12 @@ class CartProduct {
 
   factory CartProduct.fromJson(Map<String, dynamic> json) {
     return CartProduct(
-      json['productId'] as int,
-      json['quantity'] as int,
+      (json['productId'] is int) 
+          ? json['productId'] as int 
+          : (json['productId'] as num).toInt(),
+      (json['quantity'] is int) 
+          ? json['quantity'] as int 
+          : (json['quantity'] as num).toInt(),
     );
   }
 
